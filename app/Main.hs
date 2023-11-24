@@ -1,13 +1,15 @@
 module Main (main) where
 
 import Day00 as Day0
-import Day01 as Day1
 import System.Environment
 
 main :: IO ()
 main = do
     args <- getArgs
-    interact $ case read (head args) :: Integer of
+    let numString = head args
+    let num = read numString :: Integer
+    let inputFileName = "Day" ++ replicate (length numString) '0' ++ numString ++ ".txt"
+    inputFile <- readFile $ "inputs/" ++ inputFileName
+    putStr $ (case num of
                     0 -> Day0.someFunc
-                    1 -> Day1.someFunc
-                    _ -> const "Day not implemented"
+                    _ -> const "Day not implemented") inputFile

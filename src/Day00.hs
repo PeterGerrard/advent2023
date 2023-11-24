@@ -3,4 +3,4 @@ module Day00
     ) where
 
 someFunc :: String -> String
-someFunc = const "someFunc"
+someFunc = id
