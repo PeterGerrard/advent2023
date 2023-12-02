@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Day00 as Day0
+import Day02 as Day2
 import System.Environment
 
 main :: IO ()
@@ -12,4 +13,5 @@ main = do
     inputFile <- readFile $ "inputs/" ++ inputFileName
     putStr $ (case num of
                     0 -> Day0.someFunc
+                    2 -> Day2.solve
                     _ -> const "Day not implemented") inputFile
