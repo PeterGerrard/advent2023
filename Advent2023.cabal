@@ -28,6 +28,7 @@ library
       Day00
       Day02
       Day03
+      Day04
   other-modules:
       Paths_Advent2023
   autogen-modules:
