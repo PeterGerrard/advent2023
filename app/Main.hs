@@ -5,6 +5,7 @@ import Day02 as Day2
 import Day03 as Day3
 import Day04 as Day4
 import Day05 as Day5
+import Day06 as Day6
 import System.Environment
 
 main :: IO ()
@@ -21,6 +22,7 @@ main = do
         3 -> Day3.solve
         4 -> Day4.solve
         5 -> Day5.solve
+        6 -> Day6.solve
         _ -> const "Day not implemented"
     )
       inputFile
