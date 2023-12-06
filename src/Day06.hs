@@ -3,9 +3,10 @@ module Day06 (solve) where
 import Data.Char (isDigit)
 
 solve :: String -> String
-solve s = show (part1, "")
+solve s = show (part1, part2)
   where
     part1 = product . map options $ parse1 s
+    part2 = options $ parse2 s
 
 parse1 :: String -> [(Integer, Integer)]
 parse1 s = zip (parseLine ts) (parseLine ds)
