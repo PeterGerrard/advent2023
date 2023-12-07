@@ -10,7 +10,7 @@ solve s = show (part1 hs, part2 hs)
     hs = parse s
 
 data Card = C Int | T | J | Q | K | A
-  deriving (Eq)
+  deriving (Eq, Ord)
 
 instance Show Card where
   show (C n) = show n
@@ -31,24 +31,6 @@ instance Read Card where
     | x == 'A' = [(A, xs)]
     | otherwise = []
 
-instance Ord Card where
-  compare (C x) (C y) = compare x y
-  compare T T = EQ
-  compare J J = EQ
-  compare Q Q = EQ
-  compare K K = EQ
-  compare A A = EQ
-  compare _ A = LT
-  compare A _ = GT
-  compare _ K = LT
-  compare K _ = GT
-  compare _ Q = LT
-  compare Q _ = GT
-  compare _ J = LT
-  compare J _ = GT
-  compare _ T = LT
-  compare T _ = GT
-
 compare2 :: Card -> Card -> Ordering
 compare2 (C x) (C y) = compare x y
 compare2 T T = EQ
@@ -68,13 +50,10 @@ compare2 _ (C _) = LT
 compare2 (C _) _ = GT
 
 newtype Hand = H [Card]
-  deriving (Eq, Show)
+  deriving (Eq, Show, Ord)
 
 instance Read Hand where
   readsPrec _ xs = [(H [a, b, c, d, e], es) | (a, as) <- reads xs, (b, bs) <- reads as, (c, cs) <- reads bs, (d, ds) <- reads cs, (e, es) <- reads ds]
-
-instance Ord Hand where
-  compare (H h1) (H h2) = compare h1 h2
 
 compareHand2 :: Hand -> Hand -> Ordering
 compareHand2 (H xs) (H ys) = (\x -> if null x then EQ else head x) . dropWhile (== EQ) $ zipWith compare2 xs ys
