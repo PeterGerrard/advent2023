@@ -58,16 +58,20 @@ instance Read Hand where
 compareHand2 :: Hand -> Hand -> Ordering
 compareHand2 (H xs) (H ys) = (\x -> if null x then EQ else head x) . dropWhile (== EQ) $ zipWith compare2 xs ys
 
-data HandType = HighCard | OnePair | TwoPair | ThreeKind | FullHouse | FourKind | FiveKind
+data HandType = None | HighCard | OnePair | TwoPair | ThreeKind | FullHouse | FourKind | FiveKind
   deriving (Show, Eq, Ord)
 
 handScore :: Hand -> HandType
-handScore (H cs) = case maximum xs of
-  5 -> FiveKind
-  4 -> FourKind
-  3 -> if 2 `elem` xs then FullHouse else ThreeKind
-  2 -> if length (filter (== 2) xs) > 1 then TwoPair else OnePair
-  _ -> HighCard
+handScore (H cs) =
+  if null xs
+    then None
+    else case maximum xs of
+      5 -> FiveKind
+      4 -> FourKind
+      3 -> if 2 `elem` xs then FullHouse else ThreeKind
+      2 -> if length (filter (== 2) xs) > 1 then TwoPair else OnePair
+      1 -> HighCard
+      _ -> None
   where
     s = foldl (\y x -> Map.insertWith (+) x 1 y) Map.empty cs
     xs :: [Integer]
@@ -75,19 +79,17 @@ handScore (H cs) = case maximum xs of
 
 handScore2 :: Hand -> HandType
 handScore2 (H cs) =
-  if null xs
-    then FiveKind
-    else case maximum xs of
-      5 -> FiveKind
-      4 -> if js >= 1 then FiveKind else FourKind
-      3 -> if js >= 2 then FiveKind else if js == 1 then FourKind else if 2 `elem` xs then FullHouse else ThreeKind
-      2 -> if js >= 3 then FiveKind else if js == 2 then FourKind else if js == 1 && length (filter (== 2) xs) > 1 then FullHouse else if js == 1 then ThreeKind else if length (filter (== 2) xs) > 1 then TwoPair else OnePair
-      _ -> if js >= 4 then FiveKind else if js == 3 then FourKind else if js == 2 then ThreeKind else if js == 1 then OnePair else HighCard
+  case handScore (H (filter (/= J) cs)) of
+    FiveKind -> FiveKind
+    FourKind -> if js >= 1 then FiveKind else FourKind
+    FullHouse -> if js >= 2 then FiveKind else if js >= 1 then FourKind else FullHouse
+    ThreeKind -> if js >= 2 then FiveKind else if js >= 1 then FourKind else ThreeKind
+    TwoPair -> if js >= 3 then FiveKind else if js >= 2 then FourKind else if js >= 1 then FullHouse else TwoPair
+    OnePair -> if js >= 3 then FiveKind else if js >= 2 then FourKind else if js >= 1 then ThreeKind else OnePair
+    HighCard -> if js >= 4 then FiveKind else if js >= 3 then FourKind else if js >= 2 then ThreeKind else if js >= 1 then OnePair else HighCard
+    None -> if js >= 5 then FiveKind else if js >= 4 then FourKind else if js >= 3 then ThreeKind else if js >= 2 then OnePair else HighCard
   where
     js = length $ filter (== J) cs
-    s = foldl (\y x -> Map.insertWith (+) x 1 y) Map.empty (filter (/= J) cs)
-    xs :: [Integer]
-    xs = map snd $ Map.toList s
 
 parse :: String -> [(Hand, Integer)]
 parse = map parseLine . lines
