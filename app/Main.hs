@@ -9,6 +9,7 @@ import Day06 as Day6
 import Day07 as Day7
 import Day08 as Day8
 import Day09 as Day9
+import Day10 as Day10
 import System.Environment
 
 main :: IO ()
@@ -16,7 +17,7 @@ main = do
   args <- getArgs
   let numString = head args
   let num = read numString :: Integer
-  let inputFileName = "Day" ++ replicate (length numString) '0' ++ numString ++ ".txt"
+  let inputFileName = "Day" ++ replicate (2 - length numString) '0' ++ numString ++ ".txt"
   inputFile <- readFile $ "inputs/" ++ inputFileName
   putStr $
     ( case num of
@@ -29,6 +30,7 @@ main = do
         7 -> Day7.solve
         8 -> Day8.solve
         9 -> Day9.solve
+        10 -> Day10.solve
         _ -> const "Day not implemented"
     )
       inputFile
