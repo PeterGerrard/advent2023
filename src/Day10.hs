@@ -3,7 +3,7 @@
 module Day10 (solve) where
 
 import Data.Map (Map, elems, empty, insert, keys, member, unions, (!), (!?))
-import Data.Maybe (catMaybes)
+import Data.Maybe (catMaybes, isNothing)
 
 solve :: String -> String
 solve = show . maximum . elems . (\(s, m) -> getDistances m s) . parse
@@ -70,9 +70,10 @@ getDistances m s = go empty [(s, 0)]
   where
     go :: Map (Int, Int) Int -> [((Int, Int), Int)] -> Map (Int, Int) Int
     go acc [] = acc
-    go acc ((p, n) : ps) = if m ! p == Ground || member p acc then go acc ps else go (insert p n acc) (ps ++ map (,n + 1) (getAdj p))
+    go acc ((p, n) : ps) = if isNothing (m !? p) || m ! p == Ground || member p acc then go acc ps else go (insert p n acc) (ps ++ map (,n + 1) (getAdj p))
     getAdj :: (Int, Int) -> [(Int, Int)]
-    getAdj p = case m ! p of
-      Ground -> []
-      Pipe ds -> map (move p) ds
-      Start -> map (move p) [North, East, South, West]
+    getAdj p = case m !? p of
+      Nothing -> []
+      Just Ground -> []
+      Just (Pipe ds) -> map (move p) ds
+      Just Start -> map (move p) [North, East, South, West]
